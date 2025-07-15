@@ -46,3 +46,31 @@
   color: white;
   border-color: #1F3F9D;
 }
+
+.search-bar-bottom {
+  display: flex;
+  justify-content: center;
+  margin: 30px 0 20px;
+  gap: 10px;
+}
+
+.search-bar-bottom input {
+  width: 400px; /* ✅ 너비 증가 */
+  height: 25px;  /* ✅ 높이 증가 */
+  padding: 10px 14px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.search-bar-bottom button {
+  height: 44px; /* ✅ input과 동일 높이로 맞춤 */
+  padding: 0 20px;
+  font-size: 16px;
+  background-color: #1F3F9D;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+

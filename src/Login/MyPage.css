@@ -1,18 +1,44 @@
-.mypage-container{
-    flex: 1;
-    padding: 30px;
-    border: 2px solid #000;
-    border-radius: 8px;
-    background-color: #fefefe;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin-top: 40px;
-    width: 70%;
+.mypage-container {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fefefe;
+  padding: 30px;
+  max-width: 1000px;         /* ✅ board-list-container 기준 맞춤 */
+  margin: 40px auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  font-family: 'Noto Sans KR', sans-serif;
+}
+
+.mypage-container h2 {
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #1F3F9D;
 }
 
 .mypage-info {
-  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
   font-size: 16px;
-  line-height: 1.8;
+  line-height: 1.6;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.mypage-info p {
+  display: flex;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #f9fbff;
+  font-weight: bold;
+  color: #333;
+}
+
+.mypage-info strong {
+  color: #1F3F9D;
+  font-weight: 600;
 }

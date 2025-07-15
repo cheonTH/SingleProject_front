@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import MainPage from './Main/MainPage';
 import Header from './Main/Header';
 import Login from './Login/Login';
@@ -14,6 +14,7 @@ import BoardDetail from './Board/BoardDetail';
 import BoardEdit from './Board/BoardEdit';
 import MyPage from './Login/MyPage';
 import EditInfo from './Login/EditInfo';
+import BoardPop from './Board/BoardPop';
 
 function App() {
   const [selectedMenu, setSelectedMenu] = useState('/');
@@ -27,7 +28,7 @@ function App() {
       <div className="main-container">
         <div className="board-wrapper">
           <div className="floating-wrapper">
-            <FloatingMenu selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory}/>
+            <FloatingMenu selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} isLoggedIn={isLoggedIn}/>
           </div>
 
           <div className="content-wrapper">
@@ -42,14 +43,15 @@ function App() {
               />
               <Route
                 path='/board'
-                element={<BoardList selectedCategory={selectedCategory} />} 
+                element={<BoardList selectedCategory={selectedCategory} setSelectedMenu={setSelectedMenu}/>} 
               />
               <Route
                 path="/write"
                 element={<BoardWrite selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />}
               />
-              <Route path="/board/:id" element={<BoardDetail />} />
+              <Route path="/board/:id" element={<BoardDetail setSelectedMenu={setSelectedMenu}/>} />
               <Route path="/board/:id/edit" element={<BoardEdit setSelectedMenu={setSelectedMenu} />} />
+              <Route path="/boardpop" element={<BoardPop setSelectedMenu={setSelectedMenu}/>} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/find-id" element={<FindId setSelectedMenu={setSelectedMenu}/>} />
               <Route path="/find-password" element={<FindPassword setSelectedMenu={setSelectedMenu}/>} />

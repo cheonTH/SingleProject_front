@@ -11,14 +11,12 @@ const BoardWrite = ({ selectedMenu, setSelectedMenu }) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState('');
-  const [imageFiles, setImageFiles] = useState([]); // 선택된 파일 저장
   const [imageUrls, setImageUrls] = useState([]);   // base64 변환된 이미지
 
   const handleImageChange = async (e) => {
     const files = Array.from(e.target.files).filter(file =>
       file.type.startsWith('image/')
     );
-    setImageFiles(files);
 
     const base64Promises = files.map((file) => {
       return new Promise((resolve, reject) => {
@@ -36,7 +34,6 @@ const BoardWrite = ({ selectedMenu, setSelectedMenu }) => {
 
   const handleRemoveImage = (indexToRemove) => {
     setImageUrls((prev) => prev.filter((_, idx) => idx !== indexToRemove));
-    setImageFiles((prev) => prev.filter((_, idx) => idx !== indexToRemove));
   };
 
   const handleSubmit = async (e) => {
@@ -54,7 +51,7 @@ const BoardWrite = ({ selectedMenu, setSelectedMenu }) => {
       category,
       userId: localStorage.getItem('userId') || 'guest',
       nickName: localStorage.getItem('nickname') || '익명',
-      writingTime: new Date().toLocaleString('ko-KR'),
+      writingTime: new Date().toISOString(),
       imageUrls: imageUrls, // base64 이미지 전송
       likeCount: 0,
       isLiked: false,

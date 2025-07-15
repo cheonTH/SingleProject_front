@@ -1,7 +1,7 @@
 .find-container {
   flex: 1;
   padding: 30px;
-  border: 2px solid #000;
+  border: 1px solid #ddd;
   border-radius: 8px;
   background-color: #fefefe;
   display: flex;
@@ -42,9 +42,7 @@
   margin-bottom: 10px;
 }
 
-.find-form button:hover {
-  background-color: #218838;
-}
+
 
 .message-area {
   margin-top: 20px;
@@ -71,7 +69,7 @@
 }
 
 .pw-link-btn {
-  background-color: #6c63ff;
+  background-color: #1F3F9D;
   color: white;
   border: none;
   padding: 6px 10px;
@@ -80,9 +78,6 @@
   font-size: 13px;
 }
 
-.pw-link-btn:hover {
-  background-color: #4f48d6;
-}
 
 .error-message {
   color: red;
@@ -103,5 +98,5 @@
 }
 
 .find-pw-button:hover {
-  background-color: #333;
+  background-color: #eee;
 }

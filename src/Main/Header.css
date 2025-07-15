@@ -31,10 +31,14 @@
   position: relative;
   text-decoration: none;
   color: rgba(255, 255, 255, 0.7); /* 비활성: 연한 흰색 */
-  font-weight: 500;
+  font-weight: bold;
   padding: 10px 12px;
   font-size: 18px;
   transition: all 0.2s ease;
+}
+
+.link:hover{
+  color: white;
 }
 
 /* 선택된 메뉴 스타일 */
@@ -64,6 +68,7 @@
   cursor: pointer;
   font-size: 14px;
   font-family: inherit;
+  font-weight: bold;
 }
 
 .logout-button:hover {

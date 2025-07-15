@@ -2,9 +2,9 @@
   position: sticky;
   top: 200px;
   align-self: flex-start;
-  width: 160px;
+  width: 180px;
   padding: 20px;
-  border: 1px solid #ddd;  /* 단색 파란 테두리 */
+  border: 1px solid #ddd;
   border-radius: 12px;
   background-color: #ffffff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -12,26 +12,52 @@
   z-index: 10;
 }
 
+/* 캡슐형 버튼 스타일 */
 .floating-menu button {
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
   margin-bottom: 12px;
-  padding: 10px 14px;
+  padding: 8px 12px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 500;
   color: #1F5FA0;
   background-color: white;
-  border: 1px solid #D0D7E2;
-  border-radius: 8px;
+  border: 1px solid #ddd;
+  border-radius: 9999px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
+/* 아이콘 원 */
+.floating-menu button .icon-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  height: 48px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  margin-right: 12px;
+  font-size: 20px;
+  color: red;
+}
+
+
+/* 텍스트 */
+.floating-menu button .button-text {
+  flex: 1;
+  text-align: left;
+  font-weight: bold;
+}
+
+/* 버튼 호버 효과 */
 .floating-menu button:hover {
   background-color: #F0F8FF;
   color: #1B2E80;
   border-color: #A3C0F0;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .floating-menu button:active {

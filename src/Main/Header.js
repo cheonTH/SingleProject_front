@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Header.css';
 
@@ -28,7 +27,7 @@ const Header = ({selectedMenu, setSelectedMenu, setSelectedCategory, isLoggedIn,
           className="link"
           onClick={() => setSelectedMenu('/')}
         >
-          <p>Title</p>
+          <p>우리동네 자취생활</p>
         </Link>
       </div>
 
@@ -43,7 +42,7 @@ const Header = ({selectedMenu, setSelectedMenu, setSelectedCategory, isLoggedIn,
         </Link>
         <Link
           to="/board"
-          className={`link ${['/board', '/write'].includes(selectedMenu) ? 'active' : ''}`}
+          className={`link ${['/board', '/write', '/detail', '/boardpop'].includes(selectedMenu) ? 'active' : ''}`}
           onClick={() => {setSelectedMenu('/board'); setSelectedCategory('all')}}
         >
           게시판
@@ -56,7 +55,7 @@ const Header = ({selectedMenu, setSelectedMenu, setSelectedCategory, isLoggedIn,
           <>
             <Link
               to="/mypage"
-              className={`link ${selectedMenu === '/mypage' ? 'active' : ''}`}
+              className={`link ${['/mypage', '/editInfo'].includes(selectedMenu) ? 'active' : ''}`}
               onClick={() => setSelectedMenu('/mypage')}
             >
               마이페이지

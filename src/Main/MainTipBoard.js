@@ -34,6 +34,8 @@ const MainTipBoard = () => {
               title={item.title}
               author={item.nickName || '익명'}
               createdDate={item.writingTime}
+              likeCount={item.likeCount}
+              commentCount={item.commentCount}
             />
           </Link>
         ))}

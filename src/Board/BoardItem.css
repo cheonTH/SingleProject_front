@@ -46,3 +46,17 @@
     padding: 4px 8px;
     border-radius: 12px;
 }
+
+.board-stats {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #555;
+}
+
+.board-like,
+.board-comment {
+  display: flex;
+  align-items: center;
+}

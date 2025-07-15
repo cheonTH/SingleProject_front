@@ -1,7 +1,7 @@
 .login-container {
     flex: 1;
     padding: 30px;
-    border: 2px solid #1F3F9D;
+    border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #fefefe;
     display: flex;

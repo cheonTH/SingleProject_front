@@ -1,25 +1,35 @@
+// context/BoardContext.js
 import axios from 'axios';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useEffect, useState } from 'react';
 
 const BoardContext = createContext();
 
 export const BoardProvider = ({ children }) => {
   const [boardList, setBoardList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // ❗ 추가 가능
+  const [error, setError] = useState(null);
 
   const fetchBoards = async () => {
-    setLoading(true); // ✅ 새 요청마다 로딩 재설정
+    setLoading(true);
     try {
       const res = await axios.get('http://localhost:10000/api/board');
       setBoardList(res.data);
       setError(null);
     } catch (err) {
       console.error('게시글 불러오기 실패:', err);
-      setError(err); // ❗ 필요 시 에러 상태 저장
+      setError(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  // ✅ 좋아요 수 및 상태 업데이트
+  const updateBoardLikeCount = (boardId, newLikeCount, liked) => {
+    setBoardList((prev) =>
+      prev.map((item) =>
+        item.id === boardId ? { ...item, likeCount: newLikeCount, liked } : item
+      )
+    );
   };
 
   useEffect(() => {
@@ -27,11 +37,18 @@ export const BoardProvider = ({ children }) => {
   }, []);
 
   return (
-    <BoardContext.Provider value={{ boardList, loading, error, fetchBoards }}>
+    <BoardContext.Provider
+      value={{
+        boardList,
+        loading,
+        error,
+        fetchBoards,
+        updateBoardLikeCount,
+      }}
+    >
       {children}
     </BoardContext.Provider>
   );
 };
-
 
 export default BoardContext;
