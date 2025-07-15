@@ -1,0 +1,71 @@
+/* 전체 헤더 */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: #1F3F9D;
+  height: 70px;
+  border-bottom: 2px solid #1F1FA0;
+  font-family: 'Gowun Dodum', sans-serif;
+}
+
+/* 왼쪽 제목 */
+.header-title p {
+  font-size: 24px;
+  color: white;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* 메뉴 영역 */
+.header-center,
+.header-right {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+/* 공통 링크 스타일 */
+.link {
+  position: relative;
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.7); /* 비활성: 연한 흰색 */
+  font-weight: 500;
+  padding: 10px 12px;
+  font-size: 18px;
+  transition: all 0.2s ease;
+}
+
+/* 선택된 메뉴 스타일 */
+.link.active {
+  color: white;
+  font-weight: 800;
+}
+
+/* 아래 흰색 강조선 */
+.link.active::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 3px;
+  background-color: white;
+  border-radius: 2px;
+}
+
+/* 로그아웃 버튼 */
+.logout-button {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+.logout-button:hover {
+  text-decoration: underline;
+}

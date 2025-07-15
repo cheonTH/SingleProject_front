@@ -1,0 +1,114 @@
+.board-write-container {
+    flex: 1;
+    padding: 30px;
+    border: 2px solid #000;
+    border-radius: 8px;
+    background-color: #fefefe;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 40px;
+}
+
+
+.board-write-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.board-write-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.board-write-form input[type="text"],
+.board-write-form textarea,
+.board-write-form input[type="file"] {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.board-write-form textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+.board-write-form button{
+    padding: 10px;
+    font-size: 16px;
+    background-color: #333;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+.board-write-container .home-button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #fff;
+    border: 2px solid #333;
+    border-radius: 4px;
+    color: black;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.board-write-form button:hover{
+    background-color: #555;
+}
+.board-write-container .home-button:hover {
+    background-color: #eee;
+}
+
+.board-write-form select {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.preview-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.image-preview-wrapper {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.image-preview-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.remove-image-button {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+}

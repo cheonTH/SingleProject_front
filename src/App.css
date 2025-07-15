@@ -1,0 +1,36 @@
+.App {
+  background-color: 	#F8F9FA;
+  min-height: 100vh;
+}
+
+/* 플렉스 컨테이너: 가운데 정렬 */
+.main-container {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* 게시판 + 플로팅메뉴 wrapper */
+.board-wrapper {
+  display: flex;
+  flex-direction: row;
+  max-width: 1200px;
+  width: 100%;
+  gap: 20px;
+  align-items: stretch; /* 높이 맞춤 */
+}
+
+
+/* 플로팅 메뉴: 게시판 옆에 고정 */
+.floating-wrapper {
+  position: sticky;
+  top: 155px;
+  height: fit-content;
+  align-self: flex-start;
+  z-index: 500;;
+}
+
+/* 게시판 본문 영역 */
+.content-wrapper {
+  flex: 1;
+}

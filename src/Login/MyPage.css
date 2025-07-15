@@ -1,0 +1,18 @@
+.mypage-container{
+    flex: 1;
+    padding: 30px;
+    border: 2px solid #000;
+    border-radius: 8px;
+    background-color: #fefefe;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 40px;
+    width: 70%;
+}
+
+.mypage-info {
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.8;
+}

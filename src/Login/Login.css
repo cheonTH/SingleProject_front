@@ -1,0 +1,66 @@
+.login-container {
+    flex: 1;
+    padding: 30px;
+    border: 2px solid #1F3F9D;
+    border-radius: 8px;
+    background-color: #fefefe;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 40px;
+    width: 70%;
+}
+
+.login-container h2{
+  text-align: center;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 80%;
+  justify-content: center;
+  margin: 0 auto; /* 가로 가운데 정렬 */
+}
+
+.login-form input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.login-form button {
+  padding: 10px;
+  font-size: 16px;
+  background-color: #1F3F9D;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.login-form button:hover {
+  background-color: #1F4F9D;
+}
+.login-links {
+  margin-top: 15px;
+  font-size: 14px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.login-links a {
+  color: gray;
+  text-decoration: none;
+}
+
+.login-links span{
+  color: gray;
+}
+
+.login-links a:hover {
+  color: #333;
+}

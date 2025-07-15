@@ -1,0 +1,107 @@
+.find-container {
+  flex: 1;
+  padding: 30px;
+  border: 2px solid #000;
+  border-radius: 8px;
+  background-color: #fefefe;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-top: 40px;
+  width: 70%;
+}
+
+.find-id-title{
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.find-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.find-form input {
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.find-form button {
+  padding: 10px;
+  font-size: 16px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.find-form button:hover {
+  background-color: #218838;
+}
+
+.message-area {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.success-message ul {
+  text-align: left;
+  padding-left: 0;
+  margin-top: 10px;
+
+}
+
+.user-id-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #eef0ff;
+  padding: 8px 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+}
+
+.pw-link-btn {
+  background-color: #6c63ff;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.pw-link-btn:hover {
+  background-color: #4f48d6;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.go-login-button {
+  margin-top: 10px;
+  padding: 10px 16px;
+  background-color: #555;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.find-pw-button:hover {
+  background-color: #333;
+}
