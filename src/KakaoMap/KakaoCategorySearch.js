@@ -3,7 +3,7 @@ import { Map, MapMarker } from "react-kakao-maps-sdk";
 import "./Kakao.css";
 import PlaceDetailModal from "./PlaceDetailModel";
 
-const KakaoCategorySearch = ({ keyword }) => {
+const KakaoCategorySearch = ({ keyword, isAdmin }) => {
   const [map, setMap] = useState(null);
   const [places, setPlaces] = useState([]);
   const [currentPosition, setCurrentPosition] = useState(null);
@@ -147,6 +147,7 @@ const KakaoCategorySearch = ({ keyword }) => {
       <PlaceDetailModal
         place={selectedPlace}
         onClose={() => setSelectedPlace(null)}
+        isAdmin={isAdmin}
       />
     </div>
   );

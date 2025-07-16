@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './BoardWrite.css'; // 기존 CSS 재사용
 import axios from 'axios';
+import { API_BASE_URL } from '../api/AxiosApi';
 
 const BoardEdit = ({ setSelectedMenu }) => {
   const { id } = useParams();
@@ -13,12 +14,14 @@ const BoardEdit = ({ setSelectedMenu }) => {
   const [imageUrls, setImageUrls] = useState([]);   // base64 이미지
   const [imageFiles, setImageFiles] = useState([]); // 원본 파일
   const [loading, setLoading] = useState(true);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [error, setError] = useState('');
 
   // ✅ 게시글 불러오기
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const res = await axios.get(`http://localhost:10000/api/board/${id}`);
+        const res = await axios.get(`${API_BASE_URL}/api/board/${id}`);
         const post = res.data;
         setTitle(post.title);
         setContent(post.content);
@@ -65,7 +68,7 @@ const BoardEdit = ({ setSelectedMenu }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
       alert('로그인이 필요합니다.');
       return;
@@ -76,24 +79,32 @@ const BoardEdit = ({ setSelectedMenu }) => {
       content,
       category,
       imageUrls,
-      userId: localStorage.getItem('userId'),
-      nickName: localStorage.getItem('nickname'),
+      userId: sessionStorage.getItem('userId'),
+      nickName: sessionStorage.getItem('nickname'),
       writingTime: new Date().toLocaleString('ko-KR'),
     };
 
     try {
-      await axios.put(`http://localhost:10000/api/board/${id}`, updatedData, {
+      await axios.put(`${API_BASE_URL}/api/board/${id}`, updatedData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
 
-      alert('게시글이 수정되었습니다!');
-      navigate(`/board/${id}`);
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+        navigate(`/board/${id}`);
+      }, 1000);
+      
     } catch (err) {
-      console.error('게시글 수정 실패:', err);
-      alert('게시글 수정에 실패했습니다.');
+      console.error('게시글 등록 실패:', err);
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setError('error'); // 성공 상태로 세팅
+        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+      }, 1000);
     }
   };
 
@@ -161,6 +172,22 @@ const BoardEdit = ({ setSelectedMenu }) => {
       <button className="home-button" onClick={goToBack}>
         취소
       </button>
+
+      {showSuccessMessage && (
+        <div className="toast-popup">
+          {error === 'error' ? (
+            <>
+              <span className="icon">❌</span>
+              <span className="text">게시글 수정 실패!</span>
+            </>
+          ) : (
+            <>
+              <span className="icon">📝</span>
+          <span className="text">게시글 수정 성공!</span>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 };

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./PlaceDetail.css";
 import axios from "axios";
+import { API_BASE_URL } from "../api/AxiosApi";
 
-const PlaceDetailModal = ({ place, onClose }) => {
+const PlaceDetailModal = ({ place, onClose, isAdmin }) => {
   const [reviewInput, setReviewInput] = useState("");
   const [reviewList, setReviewList] = useState([]);
   const [token, setToken] = useState("");
@@ -10,12 +11,14 @@ const PlaceDetailModal = ({ place, onClose }) => {
   const [nickName, setNickName] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [myReview, setMyReview] = useState(null);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
   const reviewsPerPage = 5;
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedUserId = localStorage.getItem("userId");
-    const storedNickName = localStorage.getItem("nickName");
+    const storedToken = sessionStorage.getItem("token");
+    const storedUserId = sessionStorage.getItem("userId");
+    const storedNickName = sessionStorage.getItem("nickName");
 
     if (storedToken) setToken(storedToken);
     if (storedUserId) setUserId(storedUserId);
@@ -25,7 +28,7 @@ const PlaceDetailModal = ({ place, onClose }) => {
   useEffect(() => {
     if (!place) return;
     axios
-      .get(`http://localhost:10000/api/reviews/${place.id}`)
+      .get(`${API_BASE_URL}/api/reviews/${place.id}`)
       .then((res) => {
         setReviewList(res.data);
         setCurrentPage(1);
@@ -50,7 +53,7 @@ const PlaceDetailModal = ({ place, onClose }) => {
 
     try {
       await axios.post(
-        "http://localhost:10000/api/reviews",
+        `${API_BASE_URL}/api/reviews`,
         {
           placeId: place.id,
           placeName: place.place_name,
@@ -66,7 +69,7 @@ const PlaceDetailModal = ({ place, onClose }) => {
       );
 
       setReviewInput("");
-      const updated = await axios.get(`http://localhost:10000/api/reviews/${place.id}`);
+      const updated = await axios.get(`${API_BASE_URL}/api/reviews/${place.id}`);
       setReviewList(updated.data);
       setCurrentPage(1);
       const mine = updated.data.find((r) => r.userId === userId);
@@ -78,17 +81,20 @@ const PlaceDetailModal = ({ place, onClose }) => {
 
   const handleDelete = async (reviewId) => {
     try {
-      await axios.delete(`http://localhost:10000/api/reviews/${reviewId}`, {
+      await axios.delete(`${API_BASE_URL}/api/reviews/${reviewId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      const updated = await axios.get(`http://localhost:10000/api/reviews/${place.id}`);
+      const updated = await axios.get(`${API_BASE_URL}/api/reviews/${place.id}`);
       setReviewList(updated.data);
       if (reviewId === myReview?.id) {
         setMyReview(null);
       }
-      alert('리뷰가 삭제되었습니다!')
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+      }, 1000);
     } catch (err) {
       console.error("리뷰 삭제 실패", err);
     }
@@ -172,7 +178,7 @@ const PlaceDetailModal = ({ place, onClose }) => {
             currentReviews.map((r, i) => (
               <li key={i} style={{ marginBottom: "5px" }}>
                 <strong>{r.nickName}</strong>: 📝 {r.review}
-                {token && r.userId === userId && (
+                {token && (r.userId === userId || isAdmin) && (
                   <button
                     onClick={() => handleDelete(r.id)}
                     style={{
@@ -213,6 +219,13 @@ const PlaceDetailModal = ({ place, onClose }) => {
           닫기
         </button>
       </div>
+
+      {showSuccessMessage && (
+        <div className="toast-popup">
+          <span className="icon">✅</span>
+          <span className="text">로그인 성공!</span>
+        </div>
+      )}
     </div>
   );
 };

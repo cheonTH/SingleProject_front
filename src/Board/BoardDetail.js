@@ -3,8 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './BoardDetail.css';
 import BoardContext from './context/BoardContext';
+import { API_BASE_URL } from '../api/AxiosApi';
 
-const BoardDetail = ({ setSelectedMenu }) => {
+const BoardDetail = ({ setSelectedMenu, isAdmin }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { updateBoardLikeCount } = useContext(BoardContext);
@@ -21,11 +22,13 @@ const BoardDetail = ({ setSelectedMenu }) => {
   const [showAllComments, setShowAllComments] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showControls, setShowControls] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
   const hideControlsTimer = useRef(null);
 
-  const token = localStorage.getItem('token');
-  const currentUserId = localStorage.getItem('userId');
-  const currentNickName = localStorage.getItem('nickname');
+  const token = sessionStorage.getItem('token');
+  const currentUserId = sessionStorage.getItem('userId');
+  const currentNickName = sessionStorage.getItem('nickname');
 
   const formatToKoreanTime = (utcString) => {
     const date = new Date(utcString);
@@ -42,7 +45,7 @@ const BoardDetail = ({ setSelectedMenu }) => {
   useEffect(() => {
     const fetchBoard = async () => {
       try {
-        const res = await axios.get(`http://localhost:10000/api/board/${id}`, {
+        const res = await axios.get(`${API_BASE_URL}/api/board/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
             userId: currentUserId,
@@ -60,7 +63,7 @@ const BoardDetail = ({ setSelectedMenu }) => {
 
     const fetchComments = async () => {
       try {
-        const res = await axios.get(`http://localhost:10000/api/comments/${id}`);
+        const res = await axios.get(`${API_BASE_URL}/api/comments/${id}`);
         setComments(res.data);
       } catch (err) {
         console.error('댓글 불러오기 실패:', err);
@@ -153,7 +156,7 @@ const BoardDetail = ({ setSelectedMenu }) => {
     if (!token || !currentUserId) return alert('로그인이 필요합니다.');
     try {
       const res = await axios.post(
-        `http://localhost:10000/api/board/${id}/like`,
+        `${API_BASE_URL}/api/board/${id}/like`,
         {},
         {
           headers: {
@@ -175,12 +178,16 @@ const BoardDetail = ({ setSelectedMenu }) => {
   const handleDelete = async () => {
     if (!token || !window.confirm('정말 삭제하시겠습니까?')) return;
     try {
-      await axios.delete(`http://localhost:10000/api/board/${id}`, {
+      await axios.delete(`${API_BASE_URL}/api/board/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      alert('삭제되었습니다.');
-      navigate('/board');
-      setSelectedMenu('/board')
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+        navigate('/board');
+        setSelectedMenu('/board')
+      }, 1000);
+      
     } catch (err) {
       console.error('삭제 실패:', err);
       alert('삭제에 실패했습니다.');
@@ -193,7 +200,7 @@ const BoardDetail = ({ setSelectedMenu }) => {
 
     try {
       const res = await axios.post(
-        `http://localhost:10000/api/comments`,
+        `${API_BASE_URL}/api/comments`,
         {
           boardId: id,
           content: commentInput,
@@ -218,7 +225,7 @@ const BoardDetail = ({ setSelectedMenu }) => {
   const handleCommentDelete = async (commentId) => {
     if (!window.confirm('댓글을 삭제하시겠습니까?')) return;
     try {
-      await axios.delete(`http://localhost:10000/api/comments/${commentId}`, {
+      await axios.delete(`${API_BASE_URL}/api/comments/${commentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setComments(comments.filter((c) => c.id !== commentId));
@@ -230,7 +237,7 @@ const BoardDetail = ({ setSelectedMenu }) => {
   const handleCommentEdit = async (commentId) => {
     try {
       const res = await axios.put(
-        `http://localhost:10000/api/comments/${commentId}`,
+        `${API_BASE_URL}/api/comments/${commentId}`,
         {
           content: editingContent,
           updatedTime: new Date().toLocaleString('ko-KR'),
@@ -328,13 +335,20 @@ const BoardDetail = ({ setSelectedMenu }) => {
             }}
           >← 목록으로</button>
         </div>
-        {board.userId === currentUserId && (
+        {(board.userId === currentUserId || isAdmin) && (
           <div className="footer-right">
             <button onClick={() => navigate(`/board/${id}/edit`)} className="edit-btn">✏️ 수정</button>
             <button onClick={handleDelete} className="delete-btn">🗑 삭제</button>
           </div>
         )}
       </div>
+
+      {showSuccessMessage && (
+        <div className="toast-popup">
+          <span className="icon">🗑</span>
+          <span className="text">삭제가 완료되었습니다!</span>
+        </div>
+      )}
     </div>
   );
 };

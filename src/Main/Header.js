@@ -1,21 +1,27 @@
 import { Link, useNavigate } from 'react-router-dom';
 import './Header.css';
+import { useState } from 'react';
 
 const Header = ({selectedMenu, setSelectedMenu, setSelectedCategory, isLoggedIn, setIsLoggedIn}) => {
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("nickname");
-    localStorage.removeItem("email");
-    localStorage.removeItem("userPk");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("nickname");
+    sessionStorage.removeItem("email");
+    sessionStorage.removeItem("userPk");
     // 필요한 추가 정보도 제거
-    setIsLoggedIn(false);
-    setSelectedMenu('/');  // 홈으로 리다이렉트할 경우
-    navigate('/')
-    alert('로그아웃 되었습니다.');
+    setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+        setIsLoggedIn(false);
+        setSelectedMenu('/');  // 홈으로 리다이렉트할 경우
+        navigate('/')
+      }, 1000);
+    
   };
 
   return (
@@ -74,6 +80,12 @@ const Header = ({selectedMenu, setSelectedMenu, setSelectedCategory, isLoggedIn,
           </Link>
         )}
       </div>
+      {showSuccessMessage && (
+        <div className="toast-popup">
+          <span className="icon">✅</span>
+          <span className="text">로그아웃 되었습니다!</span>
+        </div>
+      )}
     </header>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './MyPage.css';
 import axios from 'axios';
+import { API_BASE_URL } from '../api/AxiosApi';
 
 const MyPage = () => {
   const [userInfo, setUserInfo] = useState({
@@ -13,8 +14,8 @@ const MyPage = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:10000/api/users/me', {
+        const token = sessionStorage.getItem('token');
+        const res = await axios.get(`${API_BASE_URL}/api/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -25,10 +26,10 @@ const MyPage = () => {
           nickName: res.data.nickName,
         });
 
-        // 동기화용 localStorage 업데이트
-        localStorage.setItem('name', res.data.name);
-        localStorage.setItem('email', res.data.email);
-        localStorage.setItem('nickName', res.data.nickName);
+        // 동기화용 sessionStorage 업데이트
+        sessionStorage.setItem('name', res.data.name);
+        sessionStorage.setItem('email', res.data.email);
+        sessionStorage.setItem('nickName', res.data.nickName);
       } catch (err) {
         console.error('사용자 정보 가져오기 실패', err);
       }

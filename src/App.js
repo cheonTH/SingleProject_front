@@ -21,6 +21,10 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
+  const currentUserId = sessionStorage.getItem('userId');
+
+  const isAdmin = currentUserId === 'xogus0530'
+
   return (
     <div className="App">
       <Header selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} setSelectedCategory={setSelectedCategory} isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn}/>
@@ -28,14 +32,20 @@ function App() {
       <div className="main-container">
         <div className="board-wrapper">
           <div className="floating-wrapper">
-            <FloatingMenu selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} isLoggedIn={isLoggedIn}/>
+            <FloatingMenu 
+              selectedMenu={selectedMenu} 
+              setSelectedMenu={setSelectedMenu} 
+              selectedCategory={selectedCategory} 
+              setSelectedCategory={setSelectedCategory} 
+              isLoggedIn={isLoggedIn}
+              isAdmin={isAdmin}/>
           </div>
 
           <div className="content-wrapper">
             <Routes>
               <Route
                 path="/"
-                element={<MainPage selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />}
+                element={<MainPage selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} isAdmin={isAdmin}/>}
               />
               <Route
                 path="/login"
@@ -49,14 +59,14 @@ function App() {
                 path="/write"
                 element={<BoardWrite selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />}
               />
-              <Route path="/board/:id" element={<BoardDetail setSelectedMenu={setSelectedMenu}/>} />
+              <Route path="/board/:id" element={<BoardDetail setSelectedMenu={setSelectedMenu} isAdmin={isAdmin}/>} />
               <Route path="/board/:id/edit" element={<BoardEdit setSelectedMenu={setSelectedMenu} />} />
               <Route path="/boardpop" element={<BoardPop setSelectedMenu={setSelectedMenu}/>} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/find-id" element={<FindId setSelectedMenu={setSelectedMenu}/>} />
               <Route path="/find-password" element={<FindPassword setSelectedMenu={setSelectedMenu}/>} />
               <Route path="/mypage" element={<MyPage setSelectedMenu={setSelectedMenu} />} />
-              <Route path="/editinfo" element={<EditInfo/>} />
+              <Route path="/editinfo" element={<EditInfo setSelectedMenu={setSelectedMenu}/>} />
             </Routes>
           </div>
         </div>

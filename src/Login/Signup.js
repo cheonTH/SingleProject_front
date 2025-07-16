@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Signup.css';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../api/AxiosApi';
 
 const Signup = () => {
   const [form, setForm] = useState({
@@ -15,6 +16,8 @@ const Signup = () => {
 
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState({});
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
   const navigate = useNavigate();
 
   // 정규표현식
@@ -93,9 +96,13 @@ const Signup = () => {
 
     try {
       const { confirmPassword, ...signupData } = form;
-      await axios.post('http://localhost:10000/api/users/signup', signupData);
-      alert('회원가입 성공!');
-      navigate('/login');
+      await axios.post(`${API_BASE_URL}/api/users/signup`, signupData);
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+        navigate('/login');
+      }, 1000);
+      
     } catch (error) {
       alert('회원가입 실패: ' + (error.response?.data || error.message));
     }
@@ -108,7 +115,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await axios.get('http://localhost:10000/api/users/check-userId', {
+      const res = await axios.get(`${API_BASE_URL}/api/users/check-userId`, {
         params: { userId: form.userId },
       });
 
@@ -131,7 +138,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await axios.get('http://localhost:10000/api/users/check-nickname', {
+      const res = await axios.get(`${API_BASE_URL}/api/users/check-nickname`, {
         params: { nickName: form.nickName },
       });
 
@@ -184,6 +191,13 @@ const Signup = () => {
         <button type="submit">회원가입</button>
       </form>
       <button className="back-login" onClick={() => navigate('/login')}>로그인 페이지로 이동</button>
+
+      {showSuccessMessage && (
+        <div className="toast-popup">
+          <span className="icon">✅</span>
+          <span className="text">회원가입 성공!</span>
+        </div>
+      )}
     </div>
   );
 };

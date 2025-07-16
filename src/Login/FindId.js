@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './FindId.css';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../api/AxiosApi';
 
 const FindId = ({setSelectedMenu}) => {
   const [name, setName] = useState('');
@@ -14,7 +15,7 @@ const FindId = ({setSelectedMenu}) => {
   const handleFindId = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.get('http://localhost:10000/api/users/find-userId', {
+      const res = await axios.get(`${API_BASE_URL}/api/users/find-userId`, {
         params: { name, email },
       });
 

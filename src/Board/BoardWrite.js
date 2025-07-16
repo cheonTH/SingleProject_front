@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './BoardWrite.css';
 import axios from 'axios';
 import BoardContext from './context/BoardContext';
+import { API_BASE_URL } from '../api/AxiosApi';
 
 const BoardWrite = ({ selectedMenu, setSelectedMenu }) => {
   const navigate = useNavigate();
@@ -12,24 +13,65 @@ const BoardWrite = ({ selectedMenu, setSelectedMenu }) => {
   const [content, setContent] = useState('');
   const [category, setCategory] = useState('');
   const [imageUrls, setImageUrls] = useState([]);   // base64 변환된 이미지
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [error, setError] = useState('');
+
+  // 이미지 리사이징 함수
+  const resizeImage = (file, maxWidth = 800, maxHeight = 600, quality = 0.7) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        img.src = e.target.result;
+      };
+
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        // 비율 유지하며 크기 조절
+        if (width > maxWidth) {
+          height = height * (maxWidth / width);
+          width = maxWidth;
+        }
+        if (height > maxHeight) {
+          width = width * (maxHeight / height);
+          height = maxHeight;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // jpeg 포맷으로 압축해서 base64 반환
+        const resizedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve(resizedDataUrl);
+      };
+
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
 
   const handleImageChange = async (e) => {
     const files = Array.from(e.target.files).filter(file =>
       file.type.startsWith('image/')
     );
 
-    const base64Promises = files.map((file) => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result); // ✅ 반드시 전체 문자열 저장
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-    });
+    try {
+      // 각 파일 리사이징 후 base64로 변환
+      const base64Promises = files.map((file) => resizeImage(file));
+      const base64Images = (await Promise.all(base64Promises)).filter(Boolean);
 
-
-  const base64Images = (await Promise.all(base64Promises)).filter(Boolean);
-    setImageUrls(base64Images);
+      setImageUrls(base64Images);
+    } catch (error) {
+      console.error('이미지 리사이징 실패:', error);
+      alert('이미지 처리 중 오류가 발생했습니다.');
+    }
   };
 
   const handleRemoveImage = (indexToRemove) => {
@@ -39,7 +81,7 @@ const BoardWrite = ({ selectedMenu, setSelectedMenu }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
       alert('로그인이 필요합니다.');
       return;
@@ -49,8 +91,8 @@ const BoardWrite = ({ selectedMenu, setSelectedMenu }) => {
       title,
       content,
       category,
-      userId: localStorage.getItem('userId') || 'guest',
-      nickName: localStorage.getItem('nickname') || '익명',
+      userId: sessionStorage.getItem('userId') || 'guest',
+      nickName: sessionStorage.getItem('nickname') || '익명',
       writingTime: new Date().toISOString(),
       imageUrls: imageUrls, // base64 이미지 전송
       likeCount: 0,
@@ -60,20 +102,29 @@ const BoardWrite = ({ selectedMenu, setSelectedMenu }) => {
     };
 
     try {
-      await axios.post('http://localhost:10000/api/board', data, {
+      await axios.post(`${API_BASE_URL}/api/board`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json'
         }
       });
 
-      alert('게시글이 등록되었습니다!');
-      await fetchBoards();
-      navigate('/board');
-      setSelectedMenu('/board');
+      setError('no'); // 성공 상태로 세팅
+
+      setShowSuccessMessage(true); // 메시지 보여주기
+      setTimeout(() => {
+        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+        fetchBoards();
+        navigate('/board');
+        setSelectedMenu('/board');
+      }, 1000);
     } catch (err) {
       console.error('게시글 등록 실패:', err);
-      alert('게시글 등록에 실패했습니다.');
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setError('error'); // 성공 상태로 세팅
+        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+      }, 1000);
     }
   };
 
@@ -112,7 +163,7 @@ const BoardWrite = ({ selectedMenu, setSelectedMenu }) => {
           required
         />
 
-        {/* ✅ 파일 선택 (다중 선택 가능) */}
+        {/* 파일 선택 (다중 선택 가능) */}
         <input
           type="file"
           accept="image/*"
@@ -120,7 +171,7 @@ const BoardWrite = ({ selectedMenu, setSelectedMenu }) => {
           onChange={handleImageChange}
         />
 
-        {/* ✅ 미리보기 */}
+        {/* 이미지 미리보기 */}
         <div className="preview-images">
           {imageUrls.map((url, idx) => (
             <div key={idx} className="image-preview-wrapper">
@@ -136,13 +187,28 @@ const BoardWrite = ({ selectedMenu, setSelectedMenu }) => {
           ))}
         </div>
 
-
         <button type="submit">작성 완료</button>
       </form>
 
       <button className="home-button" onClick={goToBoard}>
         게시판으로 이동
       </button>
+
+      {showSuccessMessage && (
+        <div className="toast-popup">
+          {error === 'error' ? (
+            <>
+              <span className="icon">❌</span>
+              <span className="text">게시글 등록 실패!</span>
+            </>
+          ) : (
+            <>
+              <span className="icon">📝</span>
+          <span className="text">게시글 등록 성공!</span>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 };

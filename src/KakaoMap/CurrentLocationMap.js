@@ -14,7 +14,6 @@ const CurrentLocationMap = () => {
       alert("브라우저가 위치 정보를 지원하지 않습니다.");
       return;
     }
-    console.log(window.kakao?.maps?.ControlPosition);
 
     navigator.geolocation.getCurrentPosition(
       (pos) => {

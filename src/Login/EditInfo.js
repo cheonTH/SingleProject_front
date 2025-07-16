@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './EditInfo.css';
+import { API_BASE_URL } from '../api/AxiosApi';
+import { useNavigate } from 'react-router-dom';
 
-const EditInfo = () => {
+const EditInfo = ({setSelectedMenu}) => {
   const [step, setStep] = useState(1);
   const [currentPassword, setCurrentPassword] = useState('');
   const [form, setForm] = useState({
@@ -16,12 +18,16 @@ const EditInfo = () => {
 
   const [nicknameCheck, setNicknameCheck] = useState(null);
   const [error, setError] = useState('');
-  const token = localStorage.getItem('token');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+
+  const navigate = useNavigate()
+
+  const token = sessionStorage.getItem('token');
 
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const res = await axios.get('http://localhost:10000/api/users/me', {
+        const res = await axios.get(`${API_BASE_URL}/api/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const userData = res.data;
@@ -42,7 +48,7 @@ const EditInfo = () => {
   const handlePasswordCheck = async () => {
     try {
       const res = await axios.post(
-        'http://localhost:10000/api/users/check-password',
+        `${API_BASE_URL}/api/users/check-password`,
         { password: currentPassword },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -61,7 +67,7 @@ const EditInfo = () => {
   const handleCheckNickname = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:10000/api/users/check-nickname?nickName=${form.nickname}`
+        `${API_BASE_URL}/api/users/check-nickname?nickName=${form.nickname}`
       );
       setNicknameCheck(
         res.data.available ? '사용 가능한 닉네임입니다.' : '이미 사용 중인 닉네임입니다.'
@@ -80,7 +86,7 @@ const EditInfo = () => {
 
     try {
       await axios.put(
-        'http://localhost:10000/api/users/update-profile',
+        `${API_BASE_URL}/api/users/update-profile`,
         {
           email: form.email,
           nickname: form.nickname,
@@ -88,14 +94,24 @@ const EditInfo = () => {
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      localStorage.setItem('email', form.email);
-      localStorage.setItem('nickName', form.nickname);
-      alert('수정이 완료되었습니다.');
+      sessionStorage.setItem('email', form.email);
+      sessionStorage.setItem('nickName', form.nickname);
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+        setSelectedMenu('/mypage')
+        navigate('/mypage'); // 로그인 성공 후 메인 페이지 등으로 이동
+      }, 1000);
+
       setError('');
     } catch (err) {
       console.error(err);
       setError('수정 중 오류가 발생했습니다.');
     }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') handlePasswordCheck();
   };
 
   return (
@@ -109,6 +125,7 @@ const EditInfo = () => {
             type="password"
             value={currentPassword}
             onChange={(e) => setCurrentPassword(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder="현재 비밀번호 입력"
           />
           <button className="edit-info-button" onClick={handlePasswordCheck}>
@@ -167,6 +184,13 @@ const EditInfo = () => {
 
           {error && <p className="error-message">{error}</p>}
         </>
+      )}
+
+      {showSuccessMessage && (
+        <div className="toast-popup">
+          <span className="icon">📚</span>
+          <span className="text">개인정보 수정이 완료되었습니다!</span>
+        </div>
       )}
     </div>
   );

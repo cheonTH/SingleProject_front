@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './FindPassword.css';
 import { useNavigate } from 'react-router-dom';
+import { API_BASE_URL } from '../api/AxiosApi';
 
 const FindPassword = ({setSelectedMenu}) => {
   const [userId, setUserId] = useState('');
@@ -16,7 +17,7 @@ const FindPassword = ({setSelectedMenu}) => {
     e.preventDefault();
     
     try {
-      const res = await axios.post('http://localhost:10000/api/users/reset-password', {
+      const res = await axios.post(`${API_BASE_URL}/api/users/reset-password`, {
         userId,
         email,
         newPassword,
@@ -47,7 +48,7 @@ const FindPassword = ({setSelectedMenu}) => {
 
   return (
     <div className="find-container">
-      <h2>비밀번호 재설정</h2>
+      <h2 className='find-container-title'>비밀번호 재설정</h2>
       <form onSubmit={handleResetPassword} className="find-form">
         <input
           type="text"

@@ -14,8 +14,6 @@ const BoardItem = ({ title, author, createdDate, category, likeCount, commentCou
     });
   }
 
-  console.log('🧩 BoardItem props:', title, likeCount, commentCount);
-
   return (
     <div className="board-item">
       <div className="board-text">

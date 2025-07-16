@@ -1,13 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './FloatingMenu.css';
 
-const FloatingMenu = ({ selectedMenu, setSelectedMenu, selectedCategory, setSelectedCategory, isLoggedIn }) => {
+const FloatingMenu = ({ selectedMenu, setSelectedMenu, selectedCategory, setSelectedCategory, isLoggedIn, isAdmin }) => {
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showSearchPopup, setShowSearchPopup] = useState(false);
+
+
   const navigate = useNavigate();
 
   const handleWrite = () => {
     if(isLoggedIn === false){
-        alert("로그인이 필요합니다")
+        setShowSuccessMessage(true);
+        setTimeout(() => {
+          setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+        }, 1000);
     }else{
         if (selectedMenu === '/board') {
             setSelectedMenu('/write');
@@ -33,15 +40,32 @@ const FloatingMenu = ({ selectedMenu, setSelectedMenu, selectedCategory, setSele
             <div className="icon-circle">🚩</div>
             <div className="button-text">홈</div>
           </button>
-          <button onClick={() => { setSelectedMenu('/hunbab'); navigate('/'); }}>
+          <button onClick={() => { 
+            setShowSearchPopup(true);
+            setSelectedMenu('/hunbab'); 
+            navigate('/');
+            setTimeout(() => {
+                setShowSearchPopup(false);
+              }, 500);}}>
             <div className="icon-circle">🍚</div>
             <div className="button-text">혼밥</div>
           </button>
-          <button onClick={() => { setSelectedMenu('/coinwash'); navigate('/'); }}>
+          <button onClick={() => { 
+            setShowSearchPopup(true);
+            setSelectedMenu('/coinwash'); 
+            navigate('/'); 
+            setTimeout(() => {
+                setShowSearchPopup(false);
+            }, 500);}}>
             <div className="icon-circle">🧦</div>
             <div className="button-text">코인 세탁방</div>
           </button>
-          <button onClick={() => { setSelectedMenu('/cafe'); navigate('/'); }}>
+          <button onClick={() => { setShowSearchPopup(true);
+            setSelectedMenu('/cafe'); 
+            navigate('/'); 
+            setTimeout(() => {
+                setShowSearchPopup(false);
+            }, 500);}}>
             <div className="icon-circle">☕</div>
             <div className="button-text">카페</div>
           </button>
@@ -186,6 +210,22 @@ const FloatingMenu = ({ selectedMenu, setSelectedMenu, selectedCategory, setSele
           </button>
         </>
       )}
+
+      {showSuccessMessage && (
+        <div className="toast-popup">
+          <span className="icon">❌</span>
+          <span className="text">로그인이 필요합니다!</span>
+        </div>
+      )}
+
+      {showSearchPopup && (
+        <div className="toast-popup">
+          <span className="icon">🔍</span>  {/* ← 원하는 이모지 넣기 */}
+          <div className="spinner"></div>
+          <span className="text">검색 중...</span>
+        </div>
+      )}
+
     </div>
   );
 };

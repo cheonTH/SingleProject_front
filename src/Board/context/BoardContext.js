@@ -1,6 +1,7 @@
 // context/BoardContext.js
 import axios from 'axios';
 import React, { createContext, useEffect, useState } from 'react';
+import { API_BASE_URL } from '../../api/AxiosApi';
 
 const BoardContext = createContext();
 
@@ -12,7 +13,7 @@ export const BoardProvider = ({ children }) => {
   const fetchBoards = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:10000/api/board');
+      const res = await axios.get(`${API_BASE_URL}/api/board`);
       setBoardList(res.data);
       setError(null);
     } catch (err) {

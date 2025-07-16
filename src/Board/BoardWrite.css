@@ -1,7 +1,7 @@
 .board-write-container {
     flex: 1;
     padding: 30px;
-    border: 2px solid #000;
+    border: 1px solid #ddd;
     border-radius: 8px;
     background-color: #fefefe;
     display: flex;
@@ -39,7 +39,7 @@
 .board-write-form button{
     padding: 10px;
     font-size: 16px;
-    background-color: #333;
+    background-color: #1F3F9D;
     border: none;
     border-radius: 4px;
     color: white;
@@ -50,7 +50,7 @@
     padding: 10px;
     font-size: 16px;
     background-color: #fff;
-    border: 2px solid #333;
+    border: 2px solid #1F3F9D;
     border-radius: 4px;
     color: black;
     cursor: pointer;
@@ -58,7 +58,7 @@
 }
 
 .board-write-form button:hover{
-    background-color: #555;
+    background-color: #173080;
 }
 .board-write-container .home-button:hover {
     background-color: #eee;
@@ -112,3 +112,46 @@
   padding: 0;
   line-height: 1;
 }
+
+.toast-popup {
+  position: fixed;
+  top: 98px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  padding: 8px 20px;
+  gap: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  animation: fadeInOutTop 2s ease-in-out;
+  z-index: 9999;
+}
+
+.toast-popup .icon {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  padding: 6px;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toast-popup .text {
+  color: #0b5394;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+@keyframes fadeInOutTop {
+  0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  90% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+}
+
+

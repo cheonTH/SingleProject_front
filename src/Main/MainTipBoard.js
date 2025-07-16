@@ -3,6 +3,7 @@ import './MainTipBoard.css';
 import { Link } from 'react-router-dom';
 import BoardItem from '../Board/BoardItem';
 import axios from 'axios';
+import { API_BASE_URL } from '../api/AxiosApi';
 
 const MainTipBoard = () => {
   const [tipPosts, setTipPosts] = useState([]);
@@ -10,7 +11,7 @@ const MainTipBoard = () => {
   useEffect(() => {
     const fetchTipPosts = async () => {
       try {
-        const res = await axios.get('http://localhost:10000/api/board');
+        const res = await axios.get(`${API_BASE_URL}/api/board`);
         const tips = res.data
           .filter(item => item.category === 'tip')
           .slice(0, 3);

@@ -31,8 +31,6 @@ const BoardList = ({ selectedCategory, setSelectedMenu }) => {
   useEffect(() => {
     if (!boardList) return;
 
-    console.log(boardList)
-
     const baseFiltered =
       selectedCategory === 'all'
         ? [...boardList]
