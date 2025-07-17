@@ -100,10 +100,11 @@ const BoardEdit = ({ setSelectedMenu }) => {
       
     } catch (err) {
       console.error('게시글 등록 실패:', err);
+      setError('error');
       setShowSuccessMessage(true);
       setTimeout(() => {
-        setError('error'); // 성공 상태로 세팅
         setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+        setError('')
       }, 1000);
     }
   };
@@ -175,12 +176,13 @@ const BoardEdit = ({ setSelectedMenu }) => {
 
       {showSuccessMessage && (
         <div className="toast-popup">
-          {error === 'error' ? (
+          {error === 'error' && (
             <>
               <span className="icon">❌</span>
               <span className="text">게시글 수정 실패!</span>
             </>
-          ) : (
+          )}  
+          {error === '' &&(
             <>
               <span className="icon">📝</span>
           <span className="text">게시글 수정 성공!</span>

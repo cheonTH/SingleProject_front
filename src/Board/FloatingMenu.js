@@ -34,7 +34,7 @@ const FloatingMenu = ({ selectedMenu, setSelectedMenu, selectedCategory, setSele
 
   return (
     <div className="floating-menu">
-      {['/', '/hunbab', '/coinwash', '/cafe'].includes(selectedMenu) && (
+      {['/', '/hunbab', '/coinwash', '/cafe', '/park', '/pc'].includes(selectedMenu) && (
         <>
           <button onClick={goHome}>
             <div className="icon-circle">🚩</div>
@@ -69,6 +69,24 @@ const FloatingMenu = ({ selectedMenu, setSelectedMenu, selectedCategory, setSele
             <div className="icon-circle">☕</div>
             <div className="button-text">카페</div>
           </button>
+          <button onClick={() => { setShowSearchPopup(true);
+            setSelectedMenu('/park'); 
+            navigate('/'); 
+            setTimeout(() => {
+                setShowSearchPopup(false);
+            }, 500);}}>
+            <div className="icon-circle">🏞️</div>
+            <div className="button-text">공원</div>
+          </button>
+          {/* <button onClick={() => { setShowSearchPopup(true);
+            setSelectedMenu('/pc'); 
+            navigate('/'); 
+            setTimeout(() => {
+                setShowSearchPopup(false);
+            }, 500);}}>
+            <div className="icon-circle">💻</div>
+            <div className="button-text">PC방</div>
+          </button> */}
         </>
       )}
 
@@ -160,6 +178,23 @@ const FloatingMenu = ({ selectedMenu, setSelectedMenu, selectedCategory, setSele
           <button onClick={() => { setSelectedMenu('/editInfo'); navigate('/editInfo'); }}>
             <div className="icon-circle">📚</div>
             <div className="button-text" style={{fontSize: '14px'}}>개인정보 수정</div>
+          </button>
+          <button onClick={() => { setSelectedMenu('/myboard'); navigate('/myboard'); }}>
+            <div className="icon-circle">📖</div>
+            <div className="button-text" style={{fontSize: '14px'}}>내가 쓴 글</div>
+          </button>
+        </>
+      )}
+
+      {selectedMenu === '/myboard' && (
+        <>
+          <button onClick={goHome}>
+            <div className="icon-circle">🚩</div>
+            <div className="button-text">홈</div>
+          </button>
+          <button onClick={() => { setSelectedMenu('/mypage'); navigate('/mypage'); }}>
+            <div className="icon-circle">📘</div>
+            <div className="button-text">마이페이지</div>
           </button>
         </>
       )}

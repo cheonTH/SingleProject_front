@@ -5,7 +5,7 @@ import './BoardDetail.css';
 import BoardContext from './context/BoardContext';
 import { API_BASE_URL } from '../api/AxiosApi';
 
-const BoardDetail = ({ setSelectedMenu, isAdmin }) => {
+const BoardDetail = ({ setSelectedMenu, isAdmin, selectedMenu }) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { updateBoardLikeCount } = useContext(BoardContext);
@@ -347,8 +347,15 @@ const BoardDetail = ({ setSelectedMenu, isAdmin }) => {
         <div className="footer-left">
           <button
             onClick={() => {
-              navigate('/board');
-              setSelectedMenu('/board');
+              if(selectedMenu === '/detail'){
+                navigate('/board');
+                setSelectedMenu('/board')
+              }else if(selectedMenu === '/myboard'){
+                navigate('/myboard');
+              }else if(selectedMenu === '/'){
+                navigate('/');
+              }
+                
             }}
           >← 목록으로</button>
         </div>

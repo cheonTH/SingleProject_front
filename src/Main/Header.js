@@ -41,7 +41,7 @@ const Header = ({selectedMenu, setSelectedMenu, setSelectedCategory, isLoggedIn,
       <nav className="header-center">
         <Link
           to="/"
-          className={`link ${['/', '/hunbab', '/coinwash', '/cafe'].includes(selectedMenu) ? 'active' : ''}`}
+          className={`link ${['/', '/hunbab', '/coinwash', '/cafe', '/park', '/pc'].includes(selectedMenu) ? 'active' : ''}`}
           onClick={() => setSelectedMenu('/')}
         >
           메인페이지
@@ -61,7 +61,7 @@ const Header = ({selectedMenu, setSelectedMenu, setSelectedCategory, isLoggedIn,
           <>
             <Link
               to="/mypage"
-              className={`link ${['/mypage', '/editInfo'].includes(selectedMenu) ? 'active' : ''}`}
+              className={`link ${['/mypage', '/editInfo', '/myboard'].includes(selectedMenu) ? 'active' : ''}`}
               onClick={() => setSelectedMenu('/mypage')}
             >
               마이페이지

@@ -15,6 +15,7 @@ import BoardEdit from './Board/BoardEdit';
 import MyPage from './Login/MyPage';
 import EditInfo from './Login/EditInfo';
 import BoardPop from './Board/BoardPop';
+import MyBoard from './Board/MyBoard';
 
 function App() {
   const [selectedMenu, setSelectedMenu] = useState('/');
@@ -59,7 +60,7 @@ function App() {
                 path="/write"
                 element={<BoardWrite selectedMenu={selectedMenu} setSelectedMenu={setSelectedMenu} />}
               />
-              <Route path="/board/:id" element={<BoardDetail setSelectedMenu={setSelectedMenu} isAdmin={isAdmin}/>} />
+              <Route path="/board/:id" element={<BoardDetail setSelectedMenu={setSelectedMenu} isAdmin={isAdmin} selectedMenu={selectedMenu}/>} />
               <Route path="/board/:id/edit" element={<BoardEdit setSelectedMenu={setSelectedMenu} />} />
               <Route path="/boardpop" element={<BoardPop setSelectedMenu={setSelectedMenu}/>} />
               <Route path="/signup" element={<Signup />} />
@@ -67,6 +68,7 @@ function App() {
               <Route path="/find-password" element={<FindPassword setSelectedMenu={setSelectedMenu}/>} />
               <Route path="/mypage" element={<MyPage setSelectedMenu={setSelectedMenu} />} />
               <Route path="/editinfo" element={<EditInfo setSelectedMenu={setSelectedMenu}/>} />
+              <Route path="/myboard" element={<MyBoard setSelectedMenu={setSelectedMenu}/>} />
             </Routes>
           </div>
         </div>
