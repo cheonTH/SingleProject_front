@@ -23,6 +23,7 @@ const BoardDetail = ({ setSelectedMenu, isAdmin }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showControls, setShowControls] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [popupMessage, setPopupMessage] = useState('')
 
   const hideControlsTimer = useRef(null);
 
@@ -153,7 +154,14 @@ const BoardDetail = ({ setSelectedMenu, isAdmin }) => {
   };
 
   const handleLike = async () => {
-    if (!token || !currentUserId) return alert('로그인이 필요합니다.');
+    if (!token || !currentUserId) {
+      setPopupMessage('notLogin')
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+        setPopupMessage('')
+      }, 1000);
+    }
     try {
       const res = await axios.post(
         `${API_BASE_URL}/api/board/${id}/like`,
@@ -181,11 +189,13 @@ const BoardDetail = ({ setSelectedMenu, isAdmin }) => {
       await axios.delete(`${API_BASE_URL}/api/board/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      setPopupMessage('delete')
       setShowSuccessMessage(true);
       setTimeout(() => {
         setShowSuccessMessage(false); // 2초 후 메시지 숨기기
         navigate('/board');
         setSelectedMenu('/board')
+        setPopupMessage('')
       }, 1000);
       
     } catch (err) {
@@ -196,7 +206,14 @@ const BoardDetail = ({ setSelectedMenu, isAdmin }) => {
 
   const handleCommentSubmit = async () => {
     if (!commentInput.trim()) return;
-    if (!token) return alert('로그인이 필요합니다.');
+    if (!token) {
+      setPopupMessage('notLogin')
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+        setPopupMessage('')
+      }, 1000);
+    }
 
     try {
       const res = await axios.post(
@@ -345,8 +362,18 @@ const BoardDetail = ({ setSelectedMenu, isAdmin }) => {
 
       {showSuccessMessage && (
         <div className="toast-popup">
-          <span className="icon">🗑</span>
-          <span className="text">삭제가 완료되었습니다!</span>
+          {popupMessage === 'delete' &&
+            <>
+              <span className="icon">🗑</span>
+              <span className="text">삭제가 완료되었습니다!</span>
+            </>
+          }
+          {popupMessage === 'notLogin' &&
+            <>
+              <span className="icon">❌</span>
+              <span className="text">로그인이 필요합니다!</span>
+            </>
+          }
         </div>
       )}
     </div>
