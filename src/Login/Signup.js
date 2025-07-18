@@ -12,19 +12,23 @@ const Signup = () => {
     confirmPassword: '',
     nickName: '',
     email: '',
+    emailCode: '', // 인증번호 입력
   });
 
   const [errors, setErrors] = useState({});
   const [success, setSuccess] = useState({});
+  const [emailSent, setEmailSent] = useState(false);
+  const [serverCode, setServerCode] = useState('');
+  const [emailVerified, setEmailVerified] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showMessage, setShowMessage] = useState('')
 
   const navigate = useNavigate();
 
-  // 정규표현식
   const nameRegex = /^[가-힣a-zA-Z\s]+$/;
   const idRegex = /^[a-zA-Z0-9]{4,20}$/;
   const pwRegex = /^(?=(?:.*[A-Za-z]|.*\d))(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-  const emailRegex = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,49 +39,110 @@ const Signup = () => {
     let newSuccess = {};
 
     if (name === 'name') {
-      !nameRegex.test(value)
-        ? newErrors.name = '이름은 한글 또는 영문만 입력 가능합니다.'
-        : newSuccess.name = '✅ 올바른 이름 형식입니다.';
+      if (!nameRegex.test(value)) {
+        newErrors.name = '이름은 한글 또는 영문만 입력 가능합니다.';
+        newSuccess.name = '';
+      } else {
+        newSuccess.name = '✅ 올바른 이름 형식입니다.';
+        newErrors.name = '';
+      }
     }
 
     if (name === 'userId') {
-      !idRegex.test(value)
-        ? newErrors.userId = '아이디는 영문자와 숫자 4~20자여야 합니다.'
-        : newSuccess.userId = '✅ 형식이 올바른 아이디입니다.';
+      if (!idRegex.test(value)) {
+        newErrors.userId = '아이디는 영문자와 숫자 4~20자여야 합니다.';
+        newSuccess.userId = '';
+      } else {
+        newSuccess.userId = '✅ 형식이 올바른 아이디입니다.';
+        newErrors.userId = '';
+      }
     }
 
     if (name === 'password') {
-      !pwRegex.test(value)
-        ? newErrors.password = '비밀번호는 영문자 또는 숫자, 그리고 특수문자를 포함해 8자 이상이어야 합니다.'
-        : newSuccess.password = '✅ 안전한 비밀번호입니다.';
+      if (!pwRegex.test(value)) {
+        newErrors.password = '비밀번호는 영문자 또는 숫자, 특수문자 포함 8자 이상이어야 합니다.';
+        newSuccess.password = '';
+      } else {
+        newSuccess.password = '✅ 안전한 비밀번호입니다.';
+        newErrors.password = '';
+      }
     }
 
-    if (name === 'email') {
-      !emailRegex.test(value)
-        ? newErrors.email = '유효한 이메일 형식이 아닙니다.'
-        : newSuccess.email = '✅ 올바른 이메일 형식입니다.';
+    if (name === 'confirmPassword' || name === 'password') {
+      if (updatedForm.confirmPassword && updatedForm.password !== updatedForm.confirmPassword) {
+        newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
+        newSuccess.confirmPassword = '';
+      } else if (updatedForm.confirmPassword) {
+        newSuccess.confirmPassword = '✅ 비밀번호가 일치합니다.';
+        newErrors.confirmPassword = '';
+      }
     }
 
     if (name === 'nickName') {
-      value.length < 2
-        ? newErrors.nickName = '닉네임은 2자 이상이어야 합니다.'
-        : newSuccess.nickName = '✅ 형식이 올바른 닉네임입니다.';
+      if (value.length < 2) {
+        newErrors.nickName = '닉네임은 2자 이상이어야 합니다.';
+        newSuccess.nickName = '';
+      } else {
+        newSuccess.nickName = '✅ 형식이 올바른 닉네임입니다.';
+        newErrors.nickName = '';
+      }
     }
 
-    // 비밀번호 확인 일치 여부
-    const pw = updatedForm.password;
-    const confirmPw = updatedForm.confirmPassword;
-
-    if (confirmPw && pw !== confirmPw) {
-      newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
-    } else if (confirmPw && pw === confirmPw) {
-      newSuccess.confirmPassword = '✅ 비밀번호가 일치합니다.';
+    if (name === 'email') {
+      if (!emailRegex.test(value)) {
+        newErrors.email = '유효한 이메일 형식이 아닙니다.';
+        newSuccess.email = '';
+      } else {
+        newSuccess.email = '✅ 이메일 형식이 올바릅니다.';
+        newErrors.email = '';
+      }
     }
 
-    setErrors(prev => ({ ...prev, [name]: newErrors[name] || '', confirmPassword: newErrors.confirmPassword || '' }));
-    setSuccess(prev => ({ ...prev, [name]: newSuccess[name] || '', confirmPassword: newSuccess.confirmPassword || '' }));
+    setErrors(prev => ({ ...prev, [name]: newErrors[name] || '' }));
+    setSuccess(prev => ({ ...prev, [name]: newSuccess[name] || '' }));
   };
 
+
+  const handleSendEmailCode = async () => {
+    if (!emailRegex.test(form.email)) {
+      setErrors(prev => ({ ...prev, email: '올바른 이메일을 입력해주세요.' }));
+      return;
+    }
+
+    try {
+      const res = await axios.post(`${API_BASE_URL}/api/users/send-verification-code`, null, {
+        params: { email: form.email }
+      });
+      setServerCode(res.data.code); // 실제 검증은 프론트에서 임시 보관 방식
+      
+      setShowMessage('emailSend')
+      setEmailSent(true);
+
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+        setShowMessage('')
+      }, 1000);
+    } catch (err) {
+      alert('이메일 전송 실패: ' + (err.response?.data || err.message));
+    }
+  };
+
+  const handleVerifyEmailCode = () => {
+    if (form.emailCode === serverCode) {
+      
+      setShowMessage('emailSuccess')
+      setEmailVerified(true);
+      
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false);
+        setShowMessage('')
+      }, 1000);
+    } else {
+      alert('인증번호가 일치하지 않습니다.');
+    }
+  };
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -85,9 +150,10 @@ const Signup = () => {
     const newErrors = {};
     if (!nameRegex.test(form.name)) newErrors.name = '이름은 한글 또는 영문만 입력 가능합니다.';
     if (!idRegex.test(form.userId)) newErrors.userId = '아이디는 영문자와 숫자 4~20자여야 합니다.';
-    if (!pwRegex.test(form.password)) newErrors.password = '비밀번호는 영문자 또는 숫자, 그리고 특수문자를 포함해 8자 이상이어야 합니다.';
+    if (!pwRegex.test(form.password)) newErrors.password = '비밀번호는 조건을 만족해야 합니다.';
     if (form.password !== form.confirmPassword) newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.';
     if (!emailRegex.test(form.email)) newErrors.email = '유효한 이메일 형식이 아닙니다.';
+    if (!emailVerified) newErrors.emailCode = '이메일 인증을 완료해주세요.';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -95,41 +161,43 @@ const Signup = () => {
     }
 
     try {
-      const { confirmPassword, ...signupData } = form;
+      const { confirmPassword, emailCode, ...signupData } = form;
       await axios.post(`${API_BASE_URL}/api/users/signup`, signupData);
+      
+      setShowMessage('signup')
       setShowSuccessMessage(true);
       setTimeout(() => {
-        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+        setShowSuccessMessage(false);
         navigate('/login');
+        setShowMessage('')
       }, 1000);
-      
     } catch (error) {
       alert('회원가입 실패: ' + (error.response?.data || error.message));
     }
   };
 
   const checkUserIdDuplicate = async () => {
-    if (!idRegex.test(form.userId)) {
-      setErrors(prev => ({ ...prev, userId: '아이디는 영문자와 숫자 4~20자여야 합니다.' }));
-      return;
-    }
+  if (!idRegex.test(form.userId)) {
+    setErrors(prev => ({ ...prev, userId: '아이디는 영문자와 숫자 4~20자여야 합니다.' }));
+    return;
+  }
 
-    try {
-      const res = await axios.get(`${API_BASE_URL}/api/users/check-userId`, {
-        params: { userId: form.userId },
-      });
+  try {
+    const res = await axios.get(`${API_BASE_URL}/api/users/check-userId`, {
+      params: { userId: form.userId },
+    });
 
-      if (res.data.available) {
-        setSuccess(prev => ({ ...prev, userId: '✅ 사용 가능한 아이디입니다.' }));
-        setErrors(prev => ({ ...prev, userId: '' }));
-      } else {
-        setErrors(prev => ({ ...prev, userId: '❌ 이미 사용 중인 아이디입니다.' }));
-        setSuccess(prev => ({ ...prev, userId: '' }));
-      }
-    } catch (err) {
-      setErrors(prev => ({ ...prev, userId: '서버 오류로 아이디 확인 실패' }));
+    if (res.data.available) {
+      setSuccess(prev => ({ ...prev, userId: '✅ 사용 가능한 아이디입니다.' }));
+      setErrors(prev => ({ ...prev, userId: '' }));
+    } else {
+      setErrors(prev => ({ ...prev, userId: '❌ 이미 사용 중인 아이디입니다.' }));
+      setSuccess(prev => ({ ...prev, userId: '' }));
     }
-  };
+  } catch (err) {
+    setErrors(prev => ({ ...prev, userId: '서버 오류로 아이디 확인 실패' }));
+  }
+};
 
   const checkNicknameDuplicate = async () => {
     if (form.nickName.length < 2) {
@@ -153,6 +221,7 @@ const Signup = () => {
       setErrors(prev => ({ ...prev, nickName: '서버 오류로 닉네임 확인 실패' }));
     }
   };
+
 
   return (
     <div className="signup-container">
@@ -184,9 +253,27 @@ const Signup = () => {
         {errors.nickName && <div className="error-message">{errors.nickName}</div>}
         {success.nickName && <div className="success-message">{success.nickName}</div>}
 
-        <input type="email" name="email" placeholder="이메일" value={form.email} onChange={handleChange} />
+        <div className="input-group">
+          <input type="email" name="email" placeholder="이메일" value={form.email} onChange={handleChange} />
+          <button type="button" className="check-button" onClick={handleSendEmailCode}>인증번호 요청</button>
+        </div>
         {errors.email && <div className="error-message">{errors.email}</div>}
         {success.email && <div className="success-message">{success.email}</div>}
+
+        {emailSent && (
+          <div className="input-group">
+            <input
+              type="text"
+              name="emailCode"
+              placeholder="인증번호 입력"
+              value={form.emailCode}
+              onChange={handleChange}
+            />
+            <button type="button" className="check-button" onClick={handleVerifyEmailCode}>인증 확인</button>
+          </div>
+        )}
+        {errors.emailCode && <div className="error-message">{errors.emailCode}</div>}
+        {emailVerified && <div className="success-message">✅ 이메일 인증 완료</div>}
 
         <button type="submit">회원가입</button>
       </form>
@@ -194,8 +281,24 @@ const Signup = () => {
 
       {showSuccessMessage && (
         <div className="toast-popup">
-          <span className="icon">✅</span>
-          <span className="text">회원가입 성공!</span>
+          {showMessage === 'signup' && 
+            <>
+              <span className="icon">✅</span>
+              <span className="text">회원가입 성공!</span>
+            </>
+          }
+          {showMessage === 'emailSend' && 
+            <>
+              <span className="icon">✅</span>
+              <span className="text">인증번호 전송 성공!</span>
+            </>
+          }
+          {showMessage === 'emailSuccess' && 
+            <>
+              <span className="icon">✅</span>
+              <span className="text">인증번호 확인 성공!</span>
+            </>
+          }
         </div>
       )}
     </div>

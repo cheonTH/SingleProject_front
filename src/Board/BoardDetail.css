@@ -330,3 +330,66 @@
 .footer-right button:first-child {
   margin-right: 12px;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.confirm-modal {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+  padding: 20px 30px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  min-width: 280px;
+}
+
+.confirm-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.confirm-header .icon {
+  font-size: 24px;
+  margin-right: 12px;
+}
+
+.confirm-header p {
+  font-size: 18px;
+  font-weight: bold;
+  color:#1F3F9D;
+}
+
+.confirm-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.confirm-buttons button {
+  border: 1px solid #1f3f9d;
+  border-radius: 20px;
+  padding: 8px 20px;
+  background: white;
+  color: #1f3f9d;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.confirm-buttons button:hover {
+  background: #1f3f9d;
+  color: white;
+}

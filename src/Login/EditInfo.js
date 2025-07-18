@@ -147,7 +147,7 @@ const EditInfo = ({setSelectedMenu}) => {
           <input
             type="email"
             value={form.email}
-            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            readOnly
           />
 
           <label>닉네임</label>

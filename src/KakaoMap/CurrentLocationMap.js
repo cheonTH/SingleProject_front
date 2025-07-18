@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Map, MapMarker } from "react-kakao-maps-sdk";
+import { CustomOverlayMap, Map, MapMarker } from "react-kakao-maps-sdk";
 import "./Kakao.css"; // 기존 스타일 재사용
 
 const CurrentLocationMap = () => {
@@ -42,9 +42,13 @@ const CurrentLocationMap = () => {
           zoomControl={true}
           zoomControlPosition={window.kakao.maps.ControlPosition.RIGHT}>
           {loaded && (
-            <MapMarker position={position}>
-              <div style={{ color: "#000" }}>현재 위치</div>
-            </MapMarker>
+            <>
+              <MapMarker position={position} />
+              <CustomOverlayMap position={position} yAnchor={1.5}>
+                <div className="current-location-pin">🚩 현재 위치</div>
+              </CustomOverlayMap>
+            </>
+            
           )}
         </Map>
       </div>

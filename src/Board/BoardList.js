@@ -59,10 +59,23 @@ const BoardList = ({ selectedCategory, setSelectedMenu }) => {
 
   if (loading) return <p>게시글을 불러오는 중입니다...</p>;
   if (!boardList || boardList.length === 0) return (
-                                        <div className="board-list-container">
-                                          <p>게시글이 없습니다.</p>
-                                        </div>
+    <div className="board-list-container">
+      <p>게시글이 없습니다.</p>
+    </div>
   );
+
+  if (filteredBoards.length === 0) {
+    return (
+      <div className="board-list-container">
+        <h2 className="board-list-title">
+          {isSearching
+            ? `"${searchTerm}" 검색 결과`
+            : `${title} 게시판`}
+        </h2>
+        <p>해당 카테고리에 게시글이 없습니다.</p>
+      </div>
+    );
+  }
 
   const indexOfLastPost = currentPage * postsPerPage;
   const indexOfFirstPost = indexOfLastPost - postsPerPage;

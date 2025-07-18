@@ -24,6 +24,8 @@ const BoardDetail = ({ setSelectedMenu, isAdmin, selectedMenu }) => {
   const [showControls, setShowControls] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [popupMessage, setPopupMessage] = useState('')
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showCommentDeleteConfirm, setShowCommentDeleteConfirm] = useState(false);
 
   const hideControlsTimer = useRef(null);
 
@@ -42,6 +44,19 @@ const BoardDetail = ({ setSelectedMenu, isAdmin, selectedMenu }) => {
       minute: '2-digit',
     });
   };
+
+  useEffect(() => {
+    const isModalOpen = showDeleteConfirm || showCommentDeleteConfirm;
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showDeleteConfirm, showCommentDeleteConfirm]);
 
   useEffect(() => {
     const fetchBoard = async () => {
@@ -131,7 +146,7 @@ const BoardDetail = ({ setSelectedMenu, isAdmin, selectedMenu }) => {
               >
                 수정
               </button>
-              <button onClick={() => handleCommentDelete(c.id)}>삭제</button>
+              <button onClick={() => setShowCommentDeleteConfirm(true)}>삭제</button>
             </>
           )}
         </div>
@@ -149,6 +164,20 @@ const BoardDetail = ({ setSelectedMenu, isAdmin, selectedMenu }) => {
             </div>
           </div>
         )}
+
+        {showCommentDeleteConfirm && (
+        <div className="modal-overlay">
+          <div className="confirm-modal">
+            <div className="confirm-header">
+              <p>댓글을 삭제 하시겠습니까?</p>
+            </div>
+            <div className="confirm-buttons">
+              <button onClick={()=>handleCommentDelete(c.id)}>예</button>
+              <button onClick={() => setShowCommentDeleteConfirm(false)}>아니요</button>
+            </div>
+          </div>
+        </div>
+      )}
       </div>
     ));
   };
@@ -184,7 +213,8 @@ const BoardDetail = ({ setSelectedMenu, isAdmin, selectedMenu }) => {
   };
 
   const handleDelete = async () => {
-    if (!token || !window.confirm('정말 삭제하시겠습니까?')) return;
+    // if (!token || !window.confirm('정말 삭제하시겠습니까?')) return;
+    setShowDeleteConfirm(false)
     try {
       await axios.delete(`${API_BASE_URL}/api/board/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -240,12 +270,20 @@ const BoardDetail = ({ setSelectedMenu, isAdmin, selectedMenu }) => {
   };
 
   const handleCommentDelete = async (commentId) => {
-    if (!window.confirm('댓글을 삭제하시겠습니까?')) return;
+    // if (!window.confirm('댓글을 삭제하시겠습니까?')) return;
+    setShowCommentDeleteConfirm(false)
     try {
       await axios.delete(`${API_BASE_URL}/api/comments/${commentId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setComments(comments.filter((c) => c.id !== commentId));
+      setPopupMessage('commentdelete')
+      setShowSuccessMessage(true);
+      setTimeout(() => {
+        setShowSuccessMessage(false); // 2초 후 메시지 숨기기
+        setPopupMessage('')
+      }, 1000);
+      
     } catch (err) {
       console.error('댓글 삭제 실패:', err);
     }
@@ -362,7 +400,7 @@ const BoardDetail = ({ setSelectedMenu, isAdmin, selectedMenu }) => {
         {(board.userId === currentUserId || isAdmin) && (
           <div className="footer-right">
             <button onClick={() => navigate(`/board/${id}/edit`)} className="edit-btn">✏️ 수정</button>
-            <button onClick={handleDelete} className="delete-btn">🗑 삭제</button>
+            <button onClick={() => setShowDeleteConfirm(true)} className="delete-btn">🗑 삭제</button>
           </div>
         )}
       </div>
@@ -371,7 +409,7 @@ const BoardDetail = ({ setSelectedMenu, isAdmin, selectedMenu }) => {
         <div className="toast-popup">
           {popupMessage === 'delete' &&
             <>
-              <span className="icon">🗑</span>
+              <span className="icon">✅</span>
               <span className="text">삭제가 완료되었습니다!</span>
             </>
           }
@@ -381,8 +419,29 @@ const BoardDetail = ({ setSelectedMenu, isAdmin, selectedMenu }) => {
               <span className="text">로그인이 필요합니다!</span>
             </>
           }
+          {popupMessage === 'commentdelete' &&
+            <>
+              <span className="icon">✅</span>
+              <span className="text">댓글 삭제가 완료되었습니다!</span>
+            </>
+          }
         </div>
       )}
+
+      {showDeleteConfirm && (
+        <div className="modal-overlay">
+          <div className="confirm-modal">
+            <div className="confirm-header">
+              <p>삭제 하시겠습니까?</p>
+            </div>
+            <div className="confirm-buttons">
+              <button onClick={handleDelete}>예</button>
+              <button onClick={() => setShowDeleteConfirm(false)}>아니요</button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
