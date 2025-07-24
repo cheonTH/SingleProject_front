@@ -1,14 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { CustomOverlayMap, Map, MapMarker } from "react-kakao-maps-sdk";
 import "./Kakao.css";
 import PlaceDetailModal from "./PlaceDetailModel";
+import LocationContext from "./LocationContext";
 
 const KakaoCategorySearch = ({ keyword, isAdmin }) => {
+  const {
+    currentPosition,
+    setCurrentPosition,
+    selectedAddress,
+    setSelectedAddress,
+    isCustomLocation,
+    setIsCustomLocation,
+  } = useContext(LocationContext); // ✅ Context 사용
+
   const [map, setMap] = useState(null);
   const [places, setPlaces] = useState([]);
-  const [currentPosition, setCurrentPosition] = useState(null);
   const [selectedPlace, setSelectedPlace] = useState(null);
   const [hoverIndex, setHoverIndex] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [addressInput, setAddressInput] = useState("");
+  const [showSearchPopup, setShowSearchPopup] = useState(false);
 
   const getDistance = (lat1, lng1, lat2, lng2) => {
     const R = 6371e3;
@@ -26,6 +38,7 @@ const KakaoCategorySearch = ({ keyword, isAdmin }) => {
     return Math.round(R * c);
   };
 
+  // body scroll lock
   useEffect(() => {
     document.body.style.overflow = selectedPlace ? "hidden" : "";
     return () => {
@@ -33,21 +46,7 @@ const KakaoCategorySearch = ({ keyword, isAdmin }) => {
     };
   }, [selectedPlace]);
 
-  useEffect(() => {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setCurrentPosition({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
-      },
-      () => {
-        setCurrentPosition({ lat: 37.5665, lng: 126.978 });
-      }
-    );
-  }, []);
-
+  // 키워드 검색
   useEffect(() => {
     if (!map || !currentPosition || !window.kakao?.maps?.services) return;
 
@@ -83,8 +82,9 @@ const KakaoCategorySearch = ({ keyword, isAdmin }) => {
     );
   }, [map, keyword, currentPosition]);
 
+  // 검색 결과로 bounds 조정
   useEffect(() => {
-    if (!map || !currentPosition || places.length === 0 || !window.kakao?.maps?.LatLngBounds) return;
+    if (!map || !currentPosition || places.length === 0) return;
 
     const bounds = new window.kakao.maps.LatLngBounds();
     bounds.extend(new window.kakao.maps.LatLng(currentPosition.lat, currentPosition.lng));
@@ -94,11 +94,39 @@ const KakaoCategorySearch = ({ keyword, isAdmin }) => {
     map.setBounds(bounds);
   }, [map, currentPosition, places]);
 
+  // 위치 설정
+  const handleAddressSubmit = () => {
+    if (!addressInput.trim()) return;
+
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    geocoder.addressSearch(addressInput, (result, status) => {
+      if (status === window.kakao.maps.services.Status.OK && result.length > 0) {
+        const { y, x, address_name } = result[0];
+        setCurrentPosition({ lat: parseFloat(y), lng: parseFloat(x) });
+        setSelectedAddress(address_name);
+        setIsCustomLocation(true);
+        setShowModal(false);
+      } else {
+        setShowSearchPopup(true);
+        setTimeout(() => {
+          setShowSearchPopup(false);
+        }, 1000);
+      }
+    });
+  };
+
   return (
-    <div className="kakao-fixed-layout">
-      {/* 상단 지도 영역 */}
+    <div className="kakao-category-container">
       <div className="map-section">
-        <h3 className="keyword-title">“{keyword}” 검색 결과</h3>
+        <div className="location-header">
+          <h3 className="keyword-title">“{keyword}” 검색 결과</h3>
+          <button className="set-location-btn" onClick={() => setShowModal(true)}>
+            위치 설정
+          </button>
+        </div>
+        {selectedAddress && (
+          <p style={{ fontSize: "0.9rem", color: "#555", marginTop: "-5px" }}>📍 설정된 위치: {selectedAddress}</p>
+        )}
         <div className="kakao-map">
           {currentPosition && (
             <Map
@@ -145,7 +173,7 @@ const KakaoCategorySearch = ({ keyword, isAdmin }) => {
         </div>
       </div>
 
-      {/* 아래 리스트 영역 */}
+      {/* 리스트 영역 */}
       <div className="list-section">
         <ul className="kakao-place-list">
           {places.length === 0 ? (
@@ -158,7 +186,6 @@ const KakaoCategorySearch = ({ keyword, isAdmin }) => {
                 onClick={() => setSelectedPlace(place)}
                 onMouseEnter={() => setHoverIndex(i)}
                 onMouseLeave={() => setHoverIndex(null)}
-                style={{ cursor: "pointer" }}
               >
                 <strong>{place.place_name}</strong>
                 <p>{place.road_address_name || place.address_name}</p>
@@ -175,6 +202,31 @@ const KakaoCategorySearch = ({ keyword, isAdmin }) => {
         onClose={() => setSelectedPlace(null)}
         isAdmin={isAdmin}
       />
+
+      {showModal && (
+        <div className="modal-backdrop">
+          <div className="modal">
+            <h4>주소 또는 장소명으로 위치 설정</h4>
+            <input
+              type="text"
+              placeholder="예: 상세주소 혹은 시, 구, 동(읍)"
+              value={addressInput}
+              onChange={(e) => setAddressInput(e.target.value)}
+            />
+            <div className="modal-buttons">
+              <button onClick={handleAddressSubmit}>설정</button>
+              <button onClick={() => setShowModal(false)}>취소</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showSearchPopup && (
+        <div className="toast-popup">
+          <span className="icon">❌</span>  {/* ← 원하는 이모지 넣기 */}
+          <span className="text">장소 또는 주소를 찾을 수 없습니다.</span>
+        </div>
+      )}
     </div>
   );
 };

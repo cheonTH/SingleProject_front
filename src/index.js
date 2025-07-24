@@ -5,15 +5,18 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { BoardProvider } from './Board/context/BoardContext';
+import { LocationProvider } from './KakaoMap/LocationContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
-  <BoardProvider>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </BoardProvider>
+  <LocationProvider>
+    <BoardProvider>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </BoardProvider>
+  </LocationProvider>
   </BrowserRouter>
   
 );
